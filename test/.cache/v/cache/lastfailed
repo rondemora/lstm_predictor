@@ -1,0 +1,4 @@
+{
+  "test_trader_simulator.py": true,
+  "test_trader_simulator.py::TestTrader::test_sequence": true
+}

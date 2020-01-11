@@ -1,0 +1,9 @@
+numpy
+pandas
+matplotlib
+keras
+tensorflow
+sklearn
+pystan
+fbprophet
+pytest

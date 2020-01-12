@@ -4,6 +4,8 @@ Auxiliary module to generate plots for the memory
 import pandas as pd
 import matplotlib.pyplot as plt
 
+IMG_FOLDER = 'DATASET_IMAGES/'
+
 if __name__ == "__main__":
     ## Original data plot
     df = pd.read_csv('sp5001962.csv', sep=',')
@@ -13,6 +15,14 @@ if __name__ == "__main__":
     df = df.drop('Low', axis=1)
     df = df.drop('Adj Close', axis=1)
     df = df.drop('Volume', axis=1)
+
+    print(df.loc[df['Close'].idxmax()])
+    print(df.loc[df['Close'].idxmin()])
+    plt.hist(df['Close'], bins = 20)
+    plt.ylabel('Frequency')
+    plt.xlabel('Close prices')
+    plt.savefig(IMG_FOLDER+'histogram.png')
+    plt.clf()
 
     times = pd.date_range('1962-01-02', '2019-12-05', periods=10)
 
@@ -24,7 +34,7 @@ if __name__ == "__main__":
     plt.xlabel('Date')
     plt.title('Closing prices of the original dataset')
     plt.xticks(times.to_pydatetime())
-    plt.savefig('original_data.png')
+    plt.savefig(IMG_FOLDER+'original_data.png')
     plt.clf()
 
     ## Train-test split plot
@@ -40,5 +50,5 @@ if __name__ == "__main__":
     plt.title('Closing prices of the original dataset')
     plt.xticks(times.to_pydatetime())
     plt.legend(loc=2, prop={'size': 14})
-    plt.savefig('train_test_split.png')
+    plt.savefig(IMG_FOLDER+'train_test_split.png')
     plt.clf()

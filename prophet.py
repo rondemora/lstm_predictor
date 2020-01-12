@@ -40,7 +40,9 @@ def fit_cycle(train_dataset, test_dataset, period, fourier_order, changepoint_sc
     metrics_df = forecast.set_index('ds')[['yhat']].join(test_dataset.set_index('ds').y).reset_index()
     metrics_df.dropna(inplace=True)
     rmse = sqrt(mean_squared_error(metrics_df.y, metrics_df.yhat))
+    mae = mean_absolute_error(metrics_df.y, metrics_df.yhat)
     print('rmse = ' + str(rmse))
+    print('mae = ' + str(mae))
 
     print('PLOT  ==========================================')
     ax = plt.gca()
@@ -85,15 +87,15 @@ def fit_cycle(train_dataset, test_dataset, period, fourier_order, changepoint_sc
 if __name__ == "__main__":
 
     # Change this variable to perform or not a logarithmic conversion of the original data
-    log_data = True
+    log_data = False
 
     full_dataset, train_ds, test_ds = data_preprocessor.prepare_data_prophet(log_data)
 
     # Grid definition. Add any desired values to the arrays
     grid = {
-        "period": [5],
+        "period": [9000],
         "fourier_order": [5],
-        "changepoint_scale": [0.05],
+        "changepoint_scale": [0.13],
         "changepoints": [25]
     }
 

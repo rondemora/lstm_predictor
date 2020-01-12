@@ -3,7 +3,7 @@ Module to train and test different models for the LSTM predictor.
 """
 
 import matplotlib.pyplot as plt
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential, load_model
 from keras.layers import LSTM, Dense, Dropout
@@ -30,7 +30,8 @@ def predict_model(model, X_test, y_test, scaler):
     predictions = predictions.flatten()
     y_test_scaled = scaler.inverse_transform(y_test.reshape(-1, 1)).flatten()
     rmse = sqrt(mean_squared_error(y_test_scaled, predictions))
-    return rmse, y_test_scaled, predictions
+    mae = mean_absolute_error(y_test_scaled, predictions)
+    return rmse, mae, y_test_scaled, predictions
 
 
 def calculate_rmse(input_seq_length, number_units, number_epochs, batch_size):
@@ -58,11 +59,7 @@ def calculate_rmse(input_seq_length, number_units, number_epochs, batch_size):
     model = load_model(MODELS_FOLDER+model_filename)
 
     print('PREDICT MODEL...')
-    rmse, y_test_scaled, predictions = predict_model(model, X_test, y_test, SCALER)
-
-    writer = csv.writer(open('testscaled_predictionsSMALL.csv', mode='w'), delimiter=',', lineterminator='\n')
-    writer.writerow(y_test_scaled)
-    writer.writerow(predictions)
+    rmse, mae, y_test_scaled, predictions = predict_model(model, X_test, y_test, SCALER)
 
     print('PLOTING...')
     # Print prediction and y_test
@@ -94,7 +91,7 @@ def calculate_rmse(input_seq_length, number_units, number_epochs, batch_size):
     plt.savefig(IMG_FOLDER + model_filename + '_zoomed.png')
     plt.clf()
 
-    return rmse
+    return rmse, mae
 
 
 if __name__ == "__main__":
@@ -110,13 +107,14 @@ if __name__ == "__main__":
     grid = {
         "input_seq_lenth": [5],
         "number_units": [500],
-        "number_epochs": [3],
-        "batch_size": [1]
+        "number_epochs": [5],
+        "batch_size": [96]
     }
 
     # Grid search
     for params in ParameterGrid(grid):
         print(params)
-        rmse= calculate_rmse(params['input_seq_lenth'], params['number_units'],
-                             params['number_epochs'], params['batch_size']),
-        print(rmse)
+        rmse, mae = calculate_rmse(params['input_seq_lenth'], params['number_units'], params['number_epochs'],
+                                   params['batch_size'])
+        print('RMSE = ' + str(rmse))
+        print('MAE = ' + str(mae))
